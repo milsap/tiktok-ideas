@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><title>Ideas de TikTok</title>
+<style>
+ body{font-family:system-ui;max-width:720px;margin:40px auto;padding:0 16px}
+ input{width:70%;padding:8px} button{padding:8px 16px;cursor:pointer}
+ .idea{background:#f4f4f5;border-radius:8px;padding:12px;margin:10px 0}
+ .meta{color:#71717a;font-size:.85em}
+</style>
+</head>
+<body>
+<h1>💡 Top 10 ideas de comentarios de TikTok</h1>
+<input id="url" placeholder="https://www.tiktok.com/@usuario/video/..." value="https://vt.tiktok.com/ZSpcHopcs/">
+<button onclick="extraer()">Extraer</button>
+<div id="resultado"></div>
+<script>
+async function extraer(){
+  const r = document.getElementById("resultado");
+  r.innerHTML = "⏳ Extrayendo...";
+  const res = await fetch("/extraer",{method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({url:document.getElementById("url").value})});
+  const data = await res.json();
+  if(!res.ok){ r.innerHTML = "❌ "+data.detail; return; }
+  r.innerHTML = `<h2>${data.total} comentarios analizados</h2>` +
+    data.top_ideas.map((c,i)=>`<div class="idea">
+      <b>#${i+1} ${c.usuario}</b> <span class="meta">❤️ ${c.likes} · puntaje ${c.puntaje}</span>
+      <p>${c.texto}</p></div>`).join("");
+}
+</script>
+</body>
+</html>
